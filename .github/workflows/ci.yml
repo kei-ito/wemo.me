@@ -6,3 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - run: node -v
+        - run: pwd
+        - run: ls -l
+        - run: npm install
