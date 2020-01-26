@@ -2,7 +2,7 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  build:
+  Setup:
     runs-on: ubuntu-latest
     steps:
-        - run: npm ci
+        - run: node -v
