@@ -1,0 +1,9 @@
+* {
+    margin: 0;
+    font: inherit;
+}
+
+:root {
+    font-size: 14px;
+    font-family: system-ui, -apple-system, sans-serif;
+}

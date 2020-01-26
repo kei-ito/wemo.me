@@ -2,64 +2,51 @@
     "private": true,
     "name": "wemo.me",
     "version": "0.0.0",
+    "license": "Apache-2.0",
     "scripts": {
-        "start": "ts-node ./ci/build.ts --watch",
-        "build": "ts-node ./ci/build.ts",
-        "test:tsc": "tsc",
+        "start": "ts-node rollup/start.ts",
+        "build": "ts-node rollup/build.ts",
+        "test:type": "tsc --noEmit",
         "test": "run-s test:*"
     },
     "devDependencies": {
-        "@commitlint/cli": "^8.2.0",
-        "@commitlint/config-conventional": "^8.2.0",
-        "@nlib/afs": "^3.13.4",
-        "@nlib/lint": "^3.13.4",
-        "@svgr/rollup": "^4.3.3",
-        "@types/cheerio": "^0.22.13",
-        "@types/connect": "^3.4.32",
-        "@types/node": "^12.11.7",
-        "@types/react": "^16.9.11",
-        "@types/react-dom": "^16.9.3",
-        "@types/react-router-dom": "^5.1.0",
-        "@typescript-eslint/eslint-plugin": "^2.5.0",
-        "@typescript-eslint/parser": "^2.5.0",
-        "ava": "^2.4.0",
-        "cheerio": "^1.0.0-rc.3",
-        "connect": "^3.7.0",
-        "conventional-changelog-cli": "^2.0.25",
-        "eslint": "^6.6.0",
-        "eslint-plugin-react": "^7.16.0",
-        "eslint-plugin-react-hooks": "^2.2.0",
-        "globby": "^10.0.1",
-        "husky": "^3.0.9",
-        "lint-staged": "^9.4.2",
-        "middleware-static-livereload": "^1.2.8",
+        "@commitlint/cli": "^8.3.5",
+        "@commitlint/config-conventional": "^8.3.4",
+        "@nlib/lint": "^3.17.1",
+        "@rollup/plugin-commonjs": "^11.0.1",
+        "@rollup/plugin-node-resolve": "^7.0.0",
+        "@rollup/plugin-sucrase": "^3.0.0",
+        "@typescript-eslint/eslint-plugin": "^2.17.0",
+        "@typescript-eslint/parser": "^2.17.0",
+        "conventional-changelog-cli": "^2.0.31",
+        "eslint": "^6.8.0",
+        "husky": "^4.2.1",
+        "lint-staged": "^10.0.2",
         "npm-run-all": "^4.1.5",
-        "react": "^16.11.0",
-        "react-dom": "^16.11.0",
-        "react-spring": "^8.0.27",
-        "rimraf": "^3.0.0",
-        "rollup": "^1.25.2",
-        "rollup-plugin-commonjs": "^10.1.0",
-        "rollup-plugin-embed-css": "^1.0.7",
-        "rollup-plugin-node-resolve": "^5.2.0",
-        "rollup-plugin-replace": "^2.2.0",
-        "rollup-plugin-sucrase": "^2.1.0",
-        "rollup-plugin-terser": "^5.1.2",
-        "rollup-plugin-url": "^3.0.0",
-        "ts-node": "^8.4.1",
-        "typescript": "^3.6.4"
+        "rollup": "^1.29.1",
+        "rollup-plugin-embed-css": "^1.0.16",
+        "sable": "^0.5.7",
+        "systemjs": "^6.1.9",
+        "ts-node": "^8.6.2",
+        "typescript": "^3.7.5"
     },
-    "ava": {
-        "compileEnhancements": false,
-        "extensions": [
-            "ts"
-        ],
-        "require": [
-            "ts-node/register"
-        ],
-        "files": [
-            "lib/**/*.test.js",
-            "lib-test/**/*.test.js"
+    "eslintConfig": {
+        "extends": "./node_modules/@nlib/lint/.eslintrc.json",
+        "env": {
+            "es6": true
+        },
+        "overrides": [
+            {
+                "files": [
+                    "rollup/**"
+                ],
+                "env": {
+                    "node": true
+                },
+                "rules": {
+                    "no-console": "off"
+                }
+            }
         ]
     },
     "commitlint": {
@@ -81,43 +68,6 @@
     "lint-staged": {
         "*.ts": [
             "eslint"
-        ]
-    },
-    "browserslist": [
-        "last 1 version",
-        "> 1%"
-    ],
-    "eslintConfig": {
-        "extends": [
-            "./node_modules/@nlib/lint/.eslintrc.json"
-        ],
-        "env": {
-            "es6": true
-        },
-        "overrides": [
-            {
-                "files": [
-                    "ci/**/*"
-                ],
-                "env": {
-                    "node": true
-                },
-                "rules": {
-                    "no-console": "off"
-                }
-            },
-            {
-                "files": [
-                    "src/**/*"
-                ],
-                "plugins": [
-                    "react",
-                    "react-hooks"
-                ],
-                "env": {
-                    "browser": true
-                }
-            }
         ]
     }
 }
