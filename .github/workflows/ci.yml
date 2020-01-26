@@ -5,6 +5,7 @@ jobs:
   Setup:
     runs-on: ubuntu-latest
     steps:
+        - uses: actions/checkout@v2
         - run: node -v
         - run: pwd
         - run: ls -l
