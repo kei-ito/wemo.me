@@ -4,30 +4,45 @@
     "version": "0.0.0",
     "license": "Apache-2.0",
     "scripts": {
-        "start": "ts-node rollup/start.ts",
-        "build": "ts-node rollup/build.ts",
+        "prepare": "ts-node build/indexen.ts",
+        "start:rollup": "ts-node build/start.ts",
+        "start": "run-s prepare start:*",
+        "build:rollup": "ts-node build/build.ts",
+        "build": "run-s prepare build:*",
         "test:type": "tsc --noEmit",
-        "test": "run-s test:*"
+        "test": "run-s test:*",
+        "lint:ts": "eslint --ext .ts --no-error-on-unmatched-pattern build modules src",
+        "lint:js": "eslint --ext .js --no-error-on-unmatched-pattern build modules src",
+        "lint": "run-s lint:*"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.3.5",
         "@commitlint/config-conventional": "^8.3.4",
+        "@nlib/indexen": "^3.17.1",
         "@nlib/lint": "^3.17.1",
         "@rollup/plugin-commonjs": "^11.0.1",
         "@rollup/plugin-node-resolve": "^7.0.0",
         "@rollup/plugin-sucrase": "^3.0.0",
+        "@types/react": "^16.9.19",
+        "@types/react-dom": "^16.9.5",
         "@typescript-eslint/eslint-plugin": "^2.17.0",
         "@typescript-eslint/parser": "^2.17.0",
+        "@wemo.me/eslint-plugin": "file:eslintPlugin",
         "conventional-changelog-cli": "^2.0.31",
         "eslint": "^6.8.0",
         "husky": "^4.2.1",
         "lint-staged": "^10.0.2",
         "npm-run-all": "^4.1.5",
+        "react": "^16.12.0",
+        "react-dom": "^16.12.0",
+        "react-redux": "^7.1.3",
+        "redux-saga": "^1.1.3",
         "rollup": "^1.29.1",
         "rollup-plugin-embed-css": "^1.0.16",
         "sable": "^0.5.7",
         "systemjs": "^6.1.9",
         "ts-node": "^8.6.2",
+        "typesafe-actions": "^5.1.0",
         "typescript": "^3.7.5"
     },
     "eslintConfig": {
@@ -35,16 +50,53 @@
         "env": {
             "es6": true
         },
+        "plugins": ["@wemo.me"],
+        "rules": {
+            "@wemo.me/log-files": "error"
+        },
         "overrides": [
             {
                 "files": [
-                    "rollup/**"
+                    "build/**",
+                    "eslintPlugin/**"
                 ],
                 "env": {
                     "node": true
                 },
                 "rules": {
+                    "complexity": "off",
                     "no-console": "off"
+                }
+            },
+            {
+                "files": [
+                    "modules/**",
+                    "src/**"
+                ],
+                "rules": {
+                    "@wemo.me/restrict-global": "error"
+                }
+            },
+            {
+                "files": [
+                    "modules/global/**"
+                ],
+                "rules": {
+                    "prefer-destructuring": "off",
+                    "@typescript-eslint/no-unnecessary-condition": "off",
+                    "@wemo.me/restrict-global": "off"
+                }
+            },
+            {
+                "files": [
+                    "modules/is/**",
+                    "modules/util/assure.ts",
+                    "modules/util/createTypeChecker.ts",
+                    "modules/util/createTypeFilter.ts",
+                    "modules/util/types.ts"
+                ],
+                "rules": {
+                    "@typescript-eslint/no-explicit-any": "off"
                 }
             }
         ]
@@ -66,6 +118,9 @@
         }
     },
     "lint-staged": {
+        "*.js": [
+            "eslint"
+        ],
         "*.ts": [
             "eslint"
         ]

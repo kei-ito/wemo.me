@@ -16,11 +16,16 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "allowSyntheticDefaultImports": false,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": ".",
+        "paths": {
+            "@wemo.me/*": ["modules/*"]
+        }
     },
     "include": [
         "node_modules/esifycss/@types/*",
-        "rollup/**/*",
+        "modules/**/*",
+        "build/**/*",
         "src/**/*"
     ]
 }

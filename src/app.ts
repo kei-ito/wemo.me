@@ -1,12 +1,8 @@
 import './base.css';
-import * as css from './app.css';
+import {Object, document, JSON} from '@wemo.me/global';
 
 const getMessage = (
     name: string,
-) => `Hello! ${name}`;
+) => `Hello! ${name} ${Object}`;
 
-import('./a').catch((error) => {
-    document.body.insertAdjacentText('beforeend', `${error}`);
-});
-
-document.body.insertAdjacentText('beforeend', JSON.stringify({css, m: getMessage('Foo')}));
+document.body.insertAdjacentText('beforeend', JSON.stringify({m: getMessage('Foo')}));

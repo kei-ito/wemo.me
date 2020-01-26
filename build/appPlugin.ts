@@ -6,6 +6,7 @@ import {emitSystemJs} from './emitSystemJs';
 
 export const appPlugin = (
     projectRootDirectory = path.join(__dirname, '..'),
+    modulePrefix = '@wemo.me/',
 ): rollup.Plugin => {
     const input = [
         path.join(projectRootDirectory, 'src/app.ts'),
@@ -29,6 +30,13 @@ export const appPlugin = (
                 format: 'system',
                 dir: path.join(projectRootDirectory, 'output'),
             };
+        },
+        resolveId(importee) {
+            if (importee.startsWith(modulePrefix)) {
+                const moduleName = importee.slice(modulePrefix.length);
+                return path.join(projectRootDirectory, 'modules', moduleName, 'index.ts');
+            }
+            return null;
         },
         async generateBundle(_outputOptions, bundle) {
             this.emitFile({
