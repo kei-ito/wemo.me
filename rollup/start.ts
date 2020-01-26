@@ -10,6 +10,12 @@ export const start = async () => {
         const hh = `${date.getHours()}`.padStart(2, '0');
         const mm = `${date.getMinutes()}`.padStart(2, '0');
         console.log(`${hh}:${mm} ${event.code}`);
+        switch (event.code) {
+        case 'ERROR':
+            console.error(event.error);
+            break;
+        default:
+        }
     });
     await new Promise((resolve, reject) => {
         const onEvent = (
