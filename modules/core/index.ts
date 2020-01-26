@@ -2,6 +2,7 @@
 export * from './environment/action';
 export * from './environment/reducer';
 export * from './environment/saga';
+export * from './logSaga';
 export * from './rootReducer';
 export * from './rootSaga';
 export * from './store';
