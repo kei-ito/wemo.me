@@ -4,9 +4,18 @@ import {getPlugins} from './getPlugins';
 import {generateHtml} from './generateHtml';
 import {emitSystemJs} from './emitSystemJs';
 
+export interface IAppPluginProps {
+    production?: boolean,
+    projectRootDirectory?: string,
+    modulePrefix?: string,
+}
+
 export const appPlugin = (
-    projectRootDirectory = path.join(__dirname, '..'),
-    modulePrefix = '@wemo.me/',
+    {
+        production = false,
+        projectRootDirectory = path.join(__dirname, '..'),
+        modulePrefix = '@wemo.me/',
+    }: IAppPluginProps = {},
 ): rollup.Plugin => {
     const input = [
         path.join(projectRootDirectory, 'src/app.ts'),
@@ -20,7 +29,7 @@ export const appPlugin = (
             return {
                 ...options,
                 input,
-                plugins: getPlugins(options.plugins),
+                plugins: getPlugins({plugins: options.plugins, production}),
             };
         },
         outputOptions(outputOptions) {
@@ -44,9 +53,7 @@ export const appPlugin = (
                 fileName: 'index.html',
                 source: generateHtml({
                     systemjs: await emitSystemJs(this),
-                    scripts: Object.values(bundle)
-                    .filter(isInputChunk)
-                    .map((chunk) => chunk.fileName),
+                    scripts: Object.values(bundle).filter(isInputChunk).map((chunk) => chunk.fileName),
                 }),
             });
         },

@@ -22,9 +22,11 @@
         "@nlib/lint": "^3.17.1",
         "@rollup/plugin-commonjs": "^11.0.1",
         "@rollup/plugin-node-resolve": "^7.0.0",
+        "@rollup/plugin-replace": "^2.3.0",
         "@rollup/plugin-sucrase": "^3.0.0",
         "@types/react": "^16.9.19",
         "@types/react-dom": "^16.9.5",
+        "@types/react-redux": "^7.1.7",
         "@typescript-eslint/eslint-plugin": "^2.17.0",
         "@typescript-eslint/parser": "^2.17.0",
         "@wemo.me/eslint-plugin": "file:eslintPlugin",
@@ -44,62 +46,6 @@
         "ts-node": "^8.6.2",
         "typesafe-actions": "^5.1.0",
         "typescript": "^3.7.5"
-    },
-    "eslintConfig": {
-        "extends": "./node_modules/@nlib/lint/.eslintrc.json",
-        "env": {
-            "es6": true
-        },
-        "plugins": ["@wemo.me"],
-        "rules": {
-            "@wemo.me/log-files": "error"
-        },
-        "overrides": [
-            {
-                "files": [
-                    "build/**",
-                    "eslintPlugin/**"
-                ],
-                "env": {
-                    "node": true
-                },
-                "rules": {
-                    "complexity": "off",
-                    "no-console": "off"
-                }
-            },
-            {
-                "files": [
-                    "modules/**",
-                    "src/**"
-                ],
-                "rules": {
-                    "@wemo.me/restrict-global": "error"
-                }
-            },
-            {
-                "files": [
-                    "modules/global/**"
-                ],
-                "rules": {
-                    "prefer-destructuring": "off",
-                    "@typescript-eslint/no-unnecessary-condition": "off",
-                    "@wemo.me/restrict-global": "off"
-                }
-            },
-            {
-                "files": [
-                    "modules/is/**",
-                    "modules/util/assure.ts",
-                    "modules/util/createTypeChecker.ts",
-                    "modules/util/createTypeFilter.ts",
-                    "modules/util/types.ts"
-                ],
-                "rules": {
-                    "@typescript-eslint/no-explicit-any": "off"
-                }
-            }
-        ]
     },
     "commitlint": {
         "extends": [

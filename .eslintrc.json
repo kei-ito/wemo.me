@@ -1,0 +1,67 @@
+{
+    "extends": "./node_modules/@nlib/lint/.eslintrc.json",
+    "env": {
+        "es6": true
+    },
+    "plugins": [
+        "@wemo.me"
+    ],
+    "rules": {
+        "@wemo.me/log-files": "error"
+    },
+    "overrides": [
+        {
+            "files": [
+                "build/**",
+                "eslintPlugin/**"
+            ],
+            "env": {
+                "node": true
+            },
+            "rules": {
+                "complexity": "off",
+                "no-console": "off"
+            }
+        },
+        {
+            "files": [
+                "modules/**",
+                "src/**"
+            ],
+            "rules": {
+                "@wemo.me/restrict-global": "error"
+            }
+        },
+        {
+            "files": [
+                "modules/global/**"
+            ],
+            "rules": {
+                "prefer-destructuring": "off",
+                "@typescript-eslint/no-unnecessary-condition": "off",
+                "@wemo.me/restrict-global": "off"
+            }
+        },
+        {
+            "files": [
+                "modules/is/**",
+                "modules/util/assure.ts",
+                "modules/util/createTypeChecker.ts",
+                "modules/util/createTypeFilter.ts",
+                "modules/util/types.ts"
+            ],
+            "rules": {
+                "@typescript-eslint/no-explicit-any": "off"
+            }
+        },
+        {
+            "files": [
+                "modules/core/logSaga.ts"
+            ],
+            "rules": {
+                "no-console": "off",
+                "@wemo.me/restrict-global": "off"
+            }
+        }
+    ]
+}

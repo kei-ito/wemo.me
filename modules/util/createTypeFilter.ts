@@ -4,12 +4,13 @@ import {AppError} from './AppError';
 
 export const createTypeFilter = <TType>(
     checker: ITypeChecker<TType>,
-): ITypeFilter<TType> => Object.assign(
+): ITypeFilter<TType> => Object.defineProperty(
     (input: any) => {
         if (checker(input)) {
             return input;
         }
         throw new AppError('InvalidType', `${input} is unexpected. ${checker.name} is expected.`);
     },
-    checker,
+    'name',
+    {value: checker.name},
 );
