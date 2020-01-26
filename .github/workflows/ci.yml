@@ -2,11 +2,9 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  Setup:
+  Build:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v2
-        - run: node -v
-        - run: pwd
-        - run: ls -l
-        - run: npm install
+        - run: npm ci
+        - run: npm run build
