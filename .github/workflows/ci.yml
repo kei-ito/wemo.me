@@ -2,9 +2,43 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  Build:
+  Setup:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v2
-        - run: npm ci
-        - run: npm run build
+      - uses: actions/checkout@v2
+      - run: npm ci
+      - uses: actions/upload-artifact@v1
+        with:
+          name: node_modules
+          path: node_modules
+  Lint:
+    needs: [Setup]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v1
+        with: {name: node_modules}
+      - run: npm run lint
+  Build:
+    needs: [Setup]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v1
+        with: {name: node_modules}
+      - run: npm run build
+      - run: git diff --exit-code
+      - uses: actions/upload-artifact@v1
+        with:
+          name: output
+          path: output
+  Test:
+    needs: [Build, Lint]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v1
+        with: {name: node_modules}
+      - uses: actions/download-artifact@v1
+        with: {name: output}
+      - run: npm test
