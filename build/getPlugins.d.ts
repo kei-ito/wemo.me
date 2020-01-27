@@ -1,6 +1,6 @@
 import * as rollup from 'rollup';
 export const getPlugins: (
-    props: {
+    props?: {
         plugins?: Array<rollup.Plugin>,
         production?: boolean,
     },

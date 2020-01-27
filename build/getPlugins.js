@@ -10,7 +10,7 @@ const ReactIS = require('react-is');
 exports.getPlugins = ({
     plugins = [],
     production = false,
-}) => [
+} = {}) => [
     replace({'process.env.NODE_ENV': JSON.stringify(production ? 'production' : '')}),
     sucrase({transforms: ['typescript']}),
     embedCSS(),
