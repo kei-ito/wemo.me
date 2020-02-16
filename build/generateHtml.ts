@@ -1,20 +1,51 @@
 import {promises as afs} from 'fs';
+import * as path from 'path';
 import * as cheerio from 'cheerio';
+import * as rollup from 'rollup';
+import {emitAsset} from './emitAsset';
+import {replaceReferences} from './replaceReferences';
 
 export const generateHtml = async (
     props: {
-        source: string,
+        context: rollup.PluginContext,
+        chunk: rollup.OutputChunk,
+        src: string,
+        dest: string,
         base: string,
-        file: string,
         systemjs: string,
     },
-): Promise<string> => {
-    const $ = cheerio.load(await afs.readFile(props.source, 'utf8'));
+): Promise<void> => {
+    const $ = cheerio.load(await afs.readFile(props.src, 'utf8'));
     const base = props.base || '.';
-    $('script[src^="."]').remove();
-    $('head')
-    .prepend(`<base href="${base}">`)
-    .append(`<script src="${props.systemjs}"></script>`);
-    $('body').append(`<script>System.import('./${props.file}')</script>`);
-    return $.html();
+    const head = $('head');
+    const body = $('body');
+    $('meta[charset]').remove();
+    $('meta[name="viewport"]').remove();
+    head.prepend(
+        `<base href="${base}">`,
+        '<meta charset="utf-8">',
+        '<meta name="viewport" content="width=device-width">',
+    );
+    const scripts = $('script[src^="."]').remove();
+    if (0 < scripts.length) {
+        const file = emitAsset(props.context, props.chunk.code, `${path.basename(props.src)}.js`);
+        body.append(
+            `<script src="${props.systemjs}"></script>`,
+            `<script>System.import('./${file}')</script>`,
+        );
+    }
+    const directory = path.dirname(props.src);
+    await Promise.all([
+        replaceReferences({...props, $, directory, attribute: 'src'}),
+        replaceReferences({...props, $, directory, attribute: 'href'}),
+    ]);
+    props.context.emitFile({
+        type: 'asset',
+        fileName: props.dest,
+        source: [
+            '<!doctype html>',
+            cheerio(head).html(),
+            cheerio(body).html(),
+        ].join(''),
+    });
 };

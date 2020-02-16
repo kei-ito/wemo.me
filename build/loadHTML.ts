@@ -1,7 +1,7 @@
 import {promises as afs} from 'fs';
 import * as cheerio from 'cheerio';
 
-export const generatePageScript = async (
+export const loadHTML = async (
     htmlFile: string,
 ): Promise<string> => {
     const $ = cheerio.load(await afs.readFile(htmlFile, 'utf8'));

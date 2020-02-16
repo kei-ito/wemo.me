@@ -2,10 +2,9 @@ import * as path from 'path';
 import * as rollup from 'rollup';
 import {getPlugins} from './getPlugins';
 import {listFiles} from './listFiles';
-import {generatePageScript} from './generatePageScript';
+import {loadHTML} from './loadHTML';
 import {generateHtml} from './generateHtml';
 import {emitSystemJs} from './emitSystemJs';
-import {hash} from './hash';
 import {inputChunks} from './inputChunks';
 
 export interface IAppPluginProps {
@@ -41,24 +40,20 @@ export const appPlugin = async (
             importee.slice(modulePrefix.length),
             'index.ts',
         ) : null,
-        load: async (id) => input.has(id) ? await generatePageScript(id) : null,
+        async load(id) {
+            return input.has(id) ? await loadHTML(id) : null;
+        },
         async generateBundle(_outputOptions, bundle) {
             const systemjs = await emitSystemJs(this, production);
             await Promise.all([...inputChunks(bundle, input)].map(async ({name, chunk, src}) => {
                 delete bundle[name];
-                this.emitFile({
-                    type: 'asset',
-                    fileName: path.relative(srcDirectory, src),
-                    source: await generateHtml({
-                        source: src,
-                        base: path.relative(path.dirname(src), srcDirectory),
-                        file: this.getFileName(this.emitFile({
-                            type: 'asset',
-                            fileName: `${path.basename(src, path.extname(src))}-${hash(chunk.code)}.js`,
-                            source: chunk.code,
-                        })),
-                        systemjs,
-                    }),
+                await generateHtml({
+                    context: this,
+                    chunk,
+                    src,
+                    dest: path.relative(srcDirectory, src),
+                    base: path.relative(path.dirname(src), srcDirectory),
+                    systemjs,
                 });
             }));
         },
