@@ -1,13 +1,20 @@
-export const generateHtml = (
+import {promises as afs} from 'fs';
+import * as cheerio from 'cheerio';
+
+export const generateHtml = async (
     props: {
+        source: string,
+        base: string,
+        file: string,
         systemjs: string,
-        scripts: Array<string>,
     },
-) => [
-    '<!doctype html>',
-    '<meta charset="utf-8">',
-    // '<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">',
-    '<meta name="viewport" content="width=device-width">',
-    `<script src="${props.systemjs}"></script>`,
-    ...props.scripts.map((script) => `<script>System.import('./${script}')</script>`),
-].join('\n');
+): Promise<string> => {
+    const $ = cheerio.load(await afs.readFile(props.source, 'utf8'));
+    const base = props.base || '.';
+    $('script[src^="."]').remove();
+    $('head')
+    .prepend(`<base href="${base}">`)
+    .append(`<script src="${props.systemjs}"></script>`);
+    $('body').append(`<script>System.import('./${props.file}')</script>`);
+    return $.html();
+};

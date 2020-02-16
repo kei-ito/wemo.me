@@ -1,8 +1,12 @@
 import * as path from 'path';
 import * as rollup from 'rollup';
 import {getPlugins} from './getPlugins';
+import {listFiles} from './listFiles';
+import {generatePageScript} from './generatePageScript';
 import {generateHtml} from './generateHtml';
 import {emitSystemJs} from './emitSystemJs';
+import {hash} from './hash';
+import {inputChunks} from './inputChunks';
 
 export interface IAppPluginProps {
     production?: boolean,
@@ -10,52 +14,62 @@ export interface IAppPluginProps {
     modulePrefix?: string,
 }
 
-export const appPlugin = (
+export const appPlugin = async (
     {
         production = false,
         projectRootDirectory = path.join(__dirname, '..'),
         modulePrefix = '@wemo.me/',
     }: IAppPluginProps = {},
-): rollup.Plugin => {
-    const input = [
-        path.join(projectRootDirectory, 'src/app.ts'),
-    ];
-    const isInputChunk = (
-        output: rollup.OutputAsset | rollup.OutputChunk,
-    ): output is rollup.OutputChunk => output.type === 'chunk' && input.includes(output.facadeModuleId || '');
+): Promise<rollup.Plugin> => {
+    const outputDirectory = path.join(projectRootDirectory, 'output');
+    const srcDirectory = path.join(projectRootDirectory, 'src');
+    const input = await listFiles({
+        directory: srcDirectory,
+        filter: (file) => file.endsWith('.html'),
+    });
     return {
         name: 'app',
-        options(options) {
-            return {
-                ...options,
-                input,
-                plugins: getPlugins({plugins: options.plugins, production}),
-            };
-        },
-        outputOptions(outputOptions) {
-            delete outputOptions.file;
-            return {
-                ...outputOptions,
-                format: 'system',
-                dir: path.join(projectRootDirectory, 'output'),
-            };
-        },
-        resolveId(importee) {
-            if (importee.startsWith(modulePrefix)) {
-                const moduleName = importee.slice(modulePrefix.length);
-                return path.join(projectRootDirectory, 'modules', moduleName, 'index.ts');
-            }
-            return null;
-        },
+        options: (options) => ({
+            ...options,
+            input: [...input],
+            plugins: getPlugins({plugins: options.plugins, production}),
+        }),
+        outputOptions: (outputOptions) => ({...outputOptions, format: 'system', dir: outputDirectory}),
+        resolveId: (importee) => importee.startsWith(modulePrefix) ? path.join(
+            projectRootDirectory,
+            'modules',
+            importee.slice(modulePrefix.length),
+            'index.ts',
+        ) : null,
+        load: async (id) => input.has(id) ? await generatePageScript(id) : null,
         async generateBundle(_outputOptions, bundle) {
-            this.emitFile({
-                type: 'asset',
-                fileName: 'index.html',
-                source: generateHtml({
-                    systemjs: await emitSystemJs(this),
-                    scripts: Object.values(bundle).filter(isInputChunk).map((chunk) => chunk.fileName),
-                }),
-            });
+            const systemjs = await emitSystemJs(this, production);
+            await Promise.all([...inputChunks(bundle, input)].map(async ({name, chunk, src}) => {
+                delete bundle[name];
+                this.emitFile({
+                    type: 'asset',
+                    fileName: path.relative(srcDirectory, src),
+                    source: await generateHtml({
+                        source: src,
+                        base: path.relative(path.dirname(src), srcDirectory),
+                        file: this.getFileName(this.emitFile({
+                            type: 'asset',
+                            fileName: `${path.basename(src, path.extname(src))}-${hash(chunk.code)}.js`,
+                            source: chunk.code,
+                        })),
+                        systemjs,
+                    }),
+                });
+            }));
         },
     };
 };
+
+if (!module.parent) {
+    appPlugin()
+    .then((plugin) => console.log(plugin))
+    .catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+}

@@ -1,14 +1,16 @@
-import * as fs from 'fs';
+import {promises as afs} from 'fs';
 import * as rollup from 'rollup';
+import {hash} from './hash';
 
 export const emitSystemJs = async (
     context: rollup.PluginContext,
+    production = false,
 ): Promise<string> => {
-    const filePath = require.resolve('systemjs/dist/system.min.js');
-    const assetReferenceId = context.emitFile({
+    const filePath = require.resolve(`systemjs/dist/system${production ? '.min' : ''}.js`);
+    const source = await afs.readFile(filePath);
+    return context.getFileName(context.emitFile({
         type: 'asset',
-        name: 'system.js',
-        source: await fs.promises.readFile(filePath),
-    });
-    return context.getFileName(assetReferenceId);
+        fileName: `system-${hash(source)}.js`,
+        source,
+    }));
 };

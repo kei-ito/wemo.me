@@ -25,6 +25,14 @@
         },
         {
             "files": [
+                "build/appPlugin.ts"
+            ],
+            "rules": {
+                "@typescript-eslint/no-dynamic-delete": "off"
+            }
+        },
+        {
+            "files": [
                 "modules/**",
                 "src/**"
             ],

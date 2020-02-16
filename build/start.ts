@@ -4,7 +4,7 @@ import * as sable from 'sable';
 import {appPlugin} from './appPlugin';
 
 export const start = async () => {
-    const watcher = rollup.watch([{plugins: [appPlugin()]}]);
+    const watcher = rollup.watch([{plugins: [await appPlugin()]}]);
     watcher.on('event', (event) => {
         const date = new Date();
         const hh = `${date.getHours()}`.padStart(2, '0');
