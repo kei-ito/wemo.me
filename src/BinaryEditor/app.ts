@@ -1,7 +1,6 @@
 import '../base.css';
-import {document, Promise} from '@wemo.me/global';
+import {document, Promise, Error} from '@wemo.me/global';
 import {printError} from '@wemo.me/util';
-import {className} from './style.css';
 
 Promise.all([
     import('react-redux'),
@@ -11,8 +10,10 @@ Promise.all([
     import('@wemo.me/core'),
 ])
 .then(([redux, React, ReactDOM, Component, Core]) => {
-    const appElement = document.body.appendChild(document.createElement('div'));
-    appElement.classList.add(className.app);
+    const appElement = document.querySelector('#App');
+    if (!appElement) {
+        throw new Error('NoAppElement');
+    }
     ReactDOM.render(
         React.createElement(
             redux.Provider,

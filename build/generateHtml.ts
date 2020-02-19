@@ -34,15 +34,10 @@ export const generateHtml = async (
             `<script>System.import('./${file}')</script>`,
         );
     }
-    const directory = path.dirname(props.src);
-    await Promise.all([
-        replaceReferences({...props, $, directory, attribute: 'src'}),
-        replaceReferences({...props, $, directory, attribute: 'href'}),
-    ]);
-    props.context.emitFile({
-        type: 'asset',
+    await replaceReferences({...props, $, directory: path.dirname(props.src)});
+    Object.assign(props.chunk, {
         fileName: props.dest,
-        source: [
+        code: [
             '<!doctype html>',
             cheerio(head).html(),
             cheerio(body).html(),

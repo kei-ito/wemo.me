@@ -11,6 +11,7 @@ exports.getPlugins = ({
     plugins = [],
     production = false,
 } = {}) => [
+    ...plugins,
     replace({'process.env.NODE_ENV': JSON.stringify(production ? 'production' : '')}),
     sucrase({transforms: ['typescript']}),
     embedCSS(),
@@ -22,5 +23,4 @@ exports.getPlugins = ({
             [require.resolve('react-is')]: Object.keys(ReactIS),
         },
     }),
-    ...plugins,
 ];

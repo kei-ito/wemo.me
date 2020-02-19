@@ -3,29 +3,21 @@ import * as path from 'path';
 import * as rollup from 'rollup';
 import * as cheerio from 'cheerio';
 import {emitAsset} from './emitAsset';
+import {findReferences} from './findReferences';
 
 export const replaceReferences = async (
     props: {
         context: rollup.PluginContext,
         $: CheerioStatic,
         directory: string,
-        attribute: string,
     },
 ) => {
-    await Promise.all(props.$(`[${props.attribute}^="."]`).toArray().map(async (element) => {
-        const file = path.join(props.directory, element.attribs[props.attribute]);
-        if (path.extname(file) === '.html') {
-            return;
-        }
-        const stats = await afs.stat(file).catch((error) => {
-            if (error.code === 'ENOENT') {
-                return null;
-            }
-            throw error;
-        });
-        if (stats && stats.isFile()) {
+    for (const {file, element, attribute} of await findReferences(props)) {
+        if (element.tagName === 'link' && element.attribs.rel === 'include') {
+            cheerio(element).replaceWith((await afs.readFile(file, 'utf8')).trim());
+        } else if (path.extname(file) !== '.html') {
             cheerio(element).attr(
-                props.attribute,
+                attribute,
                 emitAsset(
                     props.context,
                     await afs.readFile(file),
@@ -33,5 +25,5 @@ export const replaceReferences = async (
                 ),
             );
         }
-    }));
+    }
 };

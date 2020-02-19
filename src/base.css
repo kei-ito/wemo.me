@@ -1,9 +1,234 @@
+@keyframes FadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 * {
+    position: relative;
     margin: 0;
+    padding: 0;
     font: inherit;
+    color: inherit;
+    text-decoration: inherit;
+    background-repeat: no-repeat;
+    list-style: none;
+    line-height: inherit;
+    box-sizing: border-box;
+    border-style: none;
+    outline: 0;
+    transform-origin: center;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+::before,
+::after {
+    font: inherit;
+    color: inherit;
+    text-decoration: inherit;
+    background-repeat: no-repeat;
+    line-height: inherit;
 }
 
 :root {
+    --BaseWidth: 94%;
+    --BlackColor: rgb(33, 35, 34);
+    --WhiteColor: rgb(255, 255, 255);
+    --TwitterColor: rgb(29, 161, 242);
+    --GitHubColor: rgb(36, 41, 46);
+    --GoogleColor: rgb(66, 133, 244);
+    --ForeColor: var(--BlackColor);
+    --BackColor: var(--WhiteColor);
+    --LightColor: rgb(235, 183, 12);
+    --DarkColor: rgb(79, 51, 179);
+    --ToggleSize: 2rem;
+    --Padding: 1rem;
+    --HeaderHeight: calc(var(--ToggleSize) + var(--Padding));
     font-size: 14px;
     font-family: system-ui, -apple-system, sans-serif;
+    color: var(--ForeColor);
+    background-color: var(--BackColor);
+    line-height: 1.5;
+    transition: background-color 0.2s;
+}
+
+@media (max-width: 700px) {
+    :root {
+        --Padding: 2vw;
+    }
+}
+
+[data-inverse-appearance] {
+    --ForeColor: var(--WhiteColor);
+    --BackColor: var(--BlackColor);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ForeColor: var(--WhiteColor);
+        --BackColor: var(--BlackColor);
+    }
+    [data-inverse-appearance] {
+        --ForeColor: var(--BlackColor);
+        --BackColor: var(--WhiteColor);
+    }
+}
+
+main {
+    min-height: calc(100vh - var(--HeaderHeight));
+}
+
+svg {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.SiteHeader {
+    --LogoSize: 1.5rem;
+    height: var(--HeaderHeight);
+    display: grid;
+    grid-template-columns: calc(var(--LogoSize) * 2) 1fr calc(var(--ToggleSize) * 2);
+    align-items: center;
+    justify-items: center;
+    column-gap: var(--Padding);
+    padding: 0 var(--Padding);
+}
+
+.SiteHeader>h1 {
+    font-size: 120%;
+    justify-self: start;
+    opacity: 0;
+    animation: FadeIn 0.2s 0.2s forwards;
+}
+
+.SiteHeaderLogo {
+    display: block;
+    width: calc(var(--LogoSize) * 2);
+    height: var(--LogoSize);
+    fill: var(--ForeColor);
+}
+
+.SiteFooter {
+    padding: 4rem 0;
+    color: var(--WhiteColor);
+    background-color: var(--BlackColor);
+    border-top: solid 1px var(--WhiteColor);
+}
+
+.AppearanceToggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(var(--ToggleSize) * 2);
+    height: var(--ToggleSize);
+    border-radius: calc(var(--ToggleSize) / 2);
+    transition: background-color 0.1s, filter 0.1s;
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.5) inset;
+    background-color: var(--LightColor);
+    overflow: hidden;
+}
+
+.AppearanceToggle:hover {
+    filter: brightness(105%);
+}
+
+.AppearanceToggle>noscript {
+    display: block;
+    color: var(--WhiteColor);
+    text-align: center;
+    line-height: 1;
+    transform: scale(0.85);
+}
+
+[data-inverse-appearance] .AppearanceToggle {
+    background-color: var(--DarkColor);
+}
+
+@media (prefers-color-scheme: dark) {
+    .AppearanceToggle {
+        background-color: var(--DarkColor);
+    }
+    [data-inverse-appearance] .AppearanceToggle {
+        background-color: var(--LightColor);
+    }
+}
+
+.Card {
+    --Size: 16rem;
+    display: grid;
+    grid-template-columns: 33% 1fr;
+    grid-template-rows: 35% auto repeat(3, auto) 1fr;
+    width: var(--Size);
+    height: var(--Size);
+    margin: 0 auto;
+    border: solid 1px currentColor;
+    align-items: center;
+    justify-items: start;
+    border-radius: 3px;
+}
+
+@media (max-width: 238px) {
+    .Card {
+        --Size: 94vw;
+    }
+}
+
+.Card>svg {
+    grid-column: 1/3;
+    --Size: 3rem;
+    width: calc(var(--Size) * 2);
+    height: var(--Size);
+    fill: currentColor;
+    justify-self: center;
+    align-self: end;
+}
+
+.Card>h1 {
+    grid-column: 1/3;
+    justify-self: center;
+    padding: 0.8rem 0;
+    margin-top: 0.5rem;
+    font-size: 160%;
+    line-height: 1;
+}
+
+.Card>h2 {
+    justify-self: end;
+    padding: 0 0.25rem;
+    font-weight: bold;
+}
+
+.Card>a {
+    padding: 0 0.25rem;
+    text-decoration: underline;
+}
+
+.Card>a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: currentColor;
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+
+.Card>a:hover::before {
+    opacity: 0.1;
+}
+
+.Card>a>svg {
+    --Size: 1em;
+    display: inline-block;
+    fill: currentColor;
+    width: var(--Size);
+    height: var(--Size);
+    margin-left: 0.4em;
+    transform: matrix(0.8, 0, 0, 0.8, 0, 3);
 }

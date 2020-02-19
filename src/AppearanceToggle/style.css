@@ -1,0 +1,24 @@
+.e {
+    position: absolute;
+    left: calc(var(--ToggleSize) * -1);
+    top: 0;
+    width: calc(var(--ToggleSize) * 3);
+    height: var(--ToggleSize);
+    fill: none;
+    stroke: var(--WhiteColor);
+    stroke-width: 1.5;
+    transition: left 0.2s;
+}
+
+[data-inverse-appearance] .e {
+    left: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .e {
+        left: 0;
+    }
+    [data-inverse-appearance] .e {
+        left: calc(var(--ToggleSize) * -1);
+    }
+}

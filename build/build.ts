@@ -2,7 +2,7 @@ import * as rollup from 'rollup';
 import {appPlugin} from './appPlugin';
 
 export const build = async () => {
-    const bundle = await rollup.rollup({plugins: [await appPlugin({production: true})]});
+    const bundle = await rollup.rollup({plugins: [await appPlugin(true)]});
     await bundle.write({});
 };
 
