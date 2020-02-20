@@ -12,7 +12,7 @@ const sun = (
     y: number,
     step = 40,
     r1 = 4,
-    r2 = r1 + 3,
+    r2 = r1 + 4,
     r3 = r2 + 2,
 ): string => {
     const d = [`M${x + r1} ${fix(y)}A${r1} ${r1} 0 1 1 ${x + r1} ${fix(y - 0.01)}`];
@@ -31,7 +31,7 @@ const sun = (
 const moon = (
     x: number,
     y: number,
-    r = 7,
+    r = 8,
 ) => `M${x} ${y - r}A${r} ${r} 0 1 1 ${x - r} ${y}A4 4 0 1 0 ${x} ${y - r}z`;
 
 const createPath = (

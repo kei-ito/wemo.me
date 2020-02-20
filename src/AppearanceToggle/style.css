@@ -5,8 +5,8 @@
     width: calc(var(--ToggleSize) * 3);
     height: var(--ToggleSize);
     fill: none;
-    stroke: var(--WhiteColor);
-    stroke-width: 1.5;
+    stroke: var(--Gray8);
+    stroke-width: 2;
     transition: left 0.2s;
 }
 

@@ -36,18 +36,24 @@
 
 :root {
     --BaseWidth: 94%;
-    --BlackColor: rgb(33, 35, 34);
-    --WhiteColor: rgb(255, 255, 255);
+    --Gray0: rgb(33, 35, 34);
+    --Gray1: rgb(50, 51, 53);
+    --Gray2: rgb(69, 70, 73);
+    --Gray7: rgb(238, 238, 238);
+    --Gray8: rgb(248, 248, 248);
     --TwitterColor: rgb(29, 161, 242);
     --GitHubColor: rgb(36, 41, 46);
     --GoogleColor: rgb(66, 133, 244);
-    --ForeColor: var(--BlackColor);
-    --BackColor: var(--WhiteColor);
+    --TranslucentWhite: rgba(255, 255, 255, 0.8);
+    --TranslucentBlack: rgba(0, 0, 0, 0.8);
+    --ForeColor: var(--Gray0);
+    --BackColor: var(--Gray7);
     --LightColor: rgb(235, 183, 12);
     --DarkColor: rgb(79, 51, 179);
-    --ToggleSize: 2rem;
+    --ToggleSize: 22px;
     --Padding: 1rem;
-    --HeaderHeight: calc(var(--ToggleSize) + var(--Padding));
+    --HeaderHeight: 26px;
+    --HeaderBG: var(--TranslucentWhite);
     font-size: 14px;
     font-family: system-ui, -apple-system, sans-serif;
     color: var(--ForeColor);
@@ -63,18 +69,21 @@
 }
 
 [data-inverse-appearance] {
-    --ForeColor: var(--WhiteColor);
-    --BackColor: var(--BlackColor);
+    --ForeColor: var(--Gray8);
+    --BackColor: var(--Gray1);
+    --HeaderBG: var(--TranslucentBlack);
 }
 
 @media (prefers-color-scheme: dark) {
     :root {
-        --ForeColor: var(--WhiteColor);
-        --BackColor: var(--BlackColor);
+        --ForeColor: var(--Gray8);
+        --BackColor: var(--Gray1);
+        --HeaderBG: var(--TranslucentBlack);
     }
     [data-inverse-appearance] {
-        --ForeColor: var(--BlackColor);
-        --BackColor: var(--WhiteColor);
+        --ForeColor: var(--Gray0);
+        --BackColor: var(--Gray7);
+        --HeaderBG: var(--TranslucentWhite);
     }
 }
 
@@ -88,7 +97,7 @@ svg {
 }
 
 .SiteHeader {
-    --LogoSize: 1.5rem;
+    --LogoSize: 1rem;
     height: var(--HeaderHeight);
     display: grid;
     grid-template-columns: calc(var(--LogoSize) * 2) 1fr calc(var(--ToggleSize) * 2);
@@ -96,10 +105,23 @@ svg {
     justify-items: center;
     column-gap: var(--Padding);
     padding: 0 var(--Padding);
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    background-color: var(--HeaderBG);
+}
+
+.SiteHeader::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background-color: var(--BackColor);
+    opacity: 0.8;
 }
 
 .SiteHeader>h1 {
-    font-size: 120%;
+    font-weight: bolder;
     justify-self: start;
     opacity: 0;
     animation: FadeIn 0.2s 0.2s forwards;
@@ -114,9 +136,9 @@ svg {
 
 .SiteFooter {
     padding: 4rem 0;
-    color: var(--WhiteColor);
-    background-color: var(--BlackColor);
-    border-top: solid 1px var(--WhiteColor);
+    color: var(--Gray8);
+    background-color: var(--Gray0);
+    border-top: solid 1px var(--Gray8);
 }
 
 .AppearanceToggle {
@@ -138,7 +160,7 @@ svg {
 
 .AppearanceToggle>noscript {
     display: block;
-    color: var(--WhiteColor);
+    color: var(--Gray8);
     text-align: center;
     line-height: 1;
     transform: scale(0.85);

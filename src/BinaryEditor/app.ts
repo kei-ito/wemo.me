@@ -18,7 +18,7 @@ Promise.all([
         React.createElement(
             redux.Provider,
             {store: Core.store},
-            React.createElement(Component.Root),
+            React.createElement(Component.BinaryEditor),
         ),
         appElement,
     );
