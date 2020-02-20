@@ -17,6 +17,9 @@ export const findReferences = async (
     const references = new Set<IReference>();
     await Promise.all(['src', 'href'].map(async (attribute) => {
         await Promise.all(props.$(`[${attribute}^="."]`).toArray().map(async (element) => {
+            if (element.tagName === 'script') {
+                return;
+            }
             const relative = element.attribs[attribute];
             const file = path.join(props.directory, relative);
             const stats = await afs.stat(file).catch((error) => {

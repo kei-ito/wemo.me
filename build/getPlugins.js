@@ -1,4 +1,5 @@
 const sucrase = require('@rollup/plugin-sucrase');
+const {terser} = require('rollup-plugin-terser');
 const commonJs = require('@rollup/plugin-commonjs');
 const replace = require('@rollup/plugin-replace');
 const nodeResolve = require('@rollup/plugin-node-resolve');
@@ -11,8 +12,8 @@ exports.getPlugins = ({
     plugins = [],
     production = false,
 } = {}) => [
-    ...plugins,
     replace({'process.env.NODE_ENV': JSON.stringify(production ? 'production' : '')}),
+    ...plugins,
     sucrase({transforms: ['typescript']}),
     embedCSS(),
     nodeResolve(),
@@ -23,4 +24,5 @@ exports.getPlugins = ({
             [require.resolve('react-is')]: Object.keys(ReactIS),
         },
     }),
+    production ? terser() : null,
 ];

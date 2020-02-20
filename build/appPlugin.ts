@@ -4,8 +4,8 @@ import {getPlugins} from './getPlugins';
 import {listFiles} from './listFiles';
 import {loadHTML} from './loadHTML';
 import {generateHtml} from './generateHtml';
-import {emitSystemJs} from './emitSystemJs';
 import {inputChunks} from './inputChunks';
+import {emitSystemJs} from './emitSystemJs';
 
 export const getParameters = async (
     projectRootDirectory = path.join(__dirname, '..'),
@@ -30,12 +30,15 @@ export const getParameters = async (
     };
 };
 
-export const createLocalModuleResolver = (
+export const createModuleResolver = (
     prefix: string,
     directory: string,
 ) => (
     importee: string,
 ) => {
+    if (importee === 'systemjs') {
+        return require.resolve('systemjs/dist/system.js');
+    }
     if (importee.startsWith(prefix)) {
         return path.join(directory, importee.slice(prefix.length), 'index.ts');
     }
@@ -51,29 +54,30 @@ export const appPlugin = async (
         options: (options) => ({
             ...options,
             input: [...input],
-            plugins: getPlugins({
-                plugins: options.plugins,
-                production,
-            }),
+            plugins: getPlugins({plugins: options.plugins, production}),
         }),
         outputOptions: (outputOptions) => ({
             ...outputOptions,
             format: 'system',
             dir: directory.output,
+            sourcemap: true,
+            preserveModules: true,
+            sourcemapPathTransform: (relativePath) => path.relative(
+                directory.root,
+                path.join(directory.src, relativePath),
+            ),
         }),
-        resolveId: createLocalModuleResolver('@wemo.me/', directory.modules),
+        resolveId: createModuleResolver('@wemo.me/', directory.modules),
         async load(id) {
-            return input.has(id) ? [...await loadHTML(id)].map(({relative, file}) => {
-                if ((/[tj]s$/).test(relative)) {
-                    return `import '${relative}';`;
-                } else {
-                    this.addWatchFile(file);
-                    return '';
-                }
-            }).join('\n') : null;
+            if (input.has(id)) {
+                const {references, code} = await loadHTML(id);
+                [...references].forEach(({file}) => this.addWatchFile(file));
+                return code;
+            }
+            return null;
         },
         async generateBundle(_outputOptions, bundle) {
-            const systemjs = await emitSystemJs(this, production);
+            const systemjs = await emitSystemJs(this);
             await Promise.all([...inputChunks(bundle, input)].map(async ({chunk, src}) => await generateHtml({
                 context: this,
                 chunk,

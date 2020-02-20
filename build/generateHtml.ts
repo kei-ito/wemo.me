@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 import * as rollup from 'rollup';
 import {emitAsset} from './emitAsset';
 import {replaceReferences} from './replaceReferences';
+import {findLocalScripts} from './findLocalScripts';
 
 export const generateHtml = async (
     props: {
@@ -26,8 +27,9 @@ export const generateHtml = async (
         '<meta charset="utf-8">',
         '<meta name="viewport" content="width=device-width">',
     );
-    const scripts = $('script[src^="."]').remove();
+    const scripts = findLocalScripts($);
     if (0 < scripts.length) {
+        scripts.forEach((element) => cheerio(element).remove());
         const file = emitAsset(props.context, props.chunk.code, `${path.basename(props.src)}.js`);
         body.append(
             `<script src="${props.systemjs}"></script>`,
@@ -42,5 +44,6 @@ export const generateHtml = async (
             cheerio(head).html(),
             cheerio(body).html(),
         ].join(''),
+        map: undefined,
     });
 };
