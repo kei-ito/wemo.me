@@ -1,11 +1,14 @@
 import {createReducer, ActionType} from 'typesafe-actions';
-import {reboot, setEnvironment} from './action';
-import {IEnvironment} from '../types';
+import {Reboot, SetEnvironment} from './action';
+import {IEnvironment} from './type';
+import {getDefaultLanguage} from '@wemo.me/translation';
 
 type Actions =
-| typeof setEnvironment
-| typeof reboot;
+| typeof SetEnvironment
+| typeof Reboot;
 
-export default createReducer<IEnvironment | null, ActionType<Actions>>(null)
-.handleAction(reboot, (_state) => null)
-.handleAction(setEnvironment, (_state, action) => action.payload);
+export const EnvironmentReducer = createReducer<IEnvironment, ActionType<Actions>>({
+    language: getDefaultLanguage(),
+})
+.handleAction(Reboot, (state) => state)
+.handleAction(SetEnvironment, (_state, action) => action.payload);

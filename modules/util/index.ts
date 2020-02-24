@@ -3,6 +3,7 @@ export * from './AppError';
 export * from './assure';
 export * from './createTypeChecker';
 export * from './createTypeFilter';
+export * from './getType';
 export * from './printError';
 export * from './setDocumentTitle';
 export * from './types';

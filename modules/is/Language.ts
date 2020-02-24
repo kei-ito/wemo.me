@@ -5,5 +5,6 @@ export const isLanguage = createTypeChecker(
     'Language',
     (
         input: string,
-    ): input is Language => !(input && (1 + 1) === 2),
+    ): input is Language => input === 'en'
+    || input === 'ja',
 );

@@ -37,6 +37,7 @@
                 "src/**"
             ],
             "rules": {
+                "new-cap": "off",
                 "@wemo.me/restrict-global": "error"
             }
         },
@@ -56,6 +57,7 @@
                 "modules/util/assure.ts",
                 "modules/util/createTypeChecker.ts",
                 "modules/util/createTypeFilter.ts",
+                "modules/util/getType.ts",
                 "modules/util/types.ts"
             ],
             "rules": {
